@@ -12,6 +12,54 @@ import random
 import imgaug as ia
 
 
+def xywh2xyxy(bboxes):
+    bboxes[..., 0] = bboxes[..., 0] - bboxes[..., 2] / 2
+    bboxes[..., 1] = bboxes[..., 1] - bboxes[..., 3] / 2
+    bboxes[..., 2] = bboxes[..., 0] + bboxes[..., 2]
+    bboxes[..., 3] = bboxes[..., 1] + bboxes[..., 3]
+    return bboxes
+
+
+def xyxy2xywh(bboxes):
+    bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]
+    bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]
+    return bboxes
+
+
+def xyxy2cxcywh(bboxes):
+    bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]
+    bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]
+    bboxes[:, 0] = bboxes[:, 0] + bboxes[:, 2] * 0.5
+    bboxes[:, 1] = bboxes[:, 1] + bboxes[:, 3] * 0.5
+    return bboxes
+
+
+def cxcywh2xyxy(bboxes):
+    bboxes[:, 0] = bboxes[:, 0] - bboxes[:, 2] * 0.5
+    bboxes[:, 1] = bboxes[:, 1] - bboxes[:, 3] * 0.5
+    bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
+    bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
+    return bboxes
+
+
+# def xywh2xyxy(x):
+#     y = x.new(x.shape)
+#     y[..., 0] = x[..., 0] - x[..., 2] / 2
+#     y[..., 1] = x[..., 1] - x[..., 3] / 2
+#     y[..., 2] = x[..., 0] + x[..., 2] / 2
+#     y[..., 3] = x[..., 1] + x[..., 3] / 2
+#     return y
+
+
+# def xywh2xyxy_np(x):
+#     y = np.zeros_like(x)
+#     y[..., 0] = x[..., 0] - x[..., 2] / 2
+#     y[..., 1] = x[..., 1] - x[..., 3] / 2
+#     y[..., 2] = x[..., 0] + x[..., 2] / 2
+#     y[..., 3] = x[..., 1] + x[..., 3] / 2
+#     return y
+
+
 def provide_determinism(seed=42):
     random.seed(seed)
     np.random.seed(seed)
@@ -81,24 +129,6 @@ def rescale_boxes(boxes, current_dim, original_shape):
     boxes[:, 2] = ((boxes[:, 2] - pad_x // 2) / unpad_w) * orig_w
     boxes[:, 3] = ((boxes[:, 3] - pad_y // 2) / unpad_h) * orig_h
     return boxes
-
-
-def xywh2xyxy(x):
-    y = x.new(x.shape)
-    y[..., 0] = x[..., 0] - x[..., 2] / 2
-    y[..., 1] = x[..., 1] - x[..., 3] / 2
-    y[..., 2] = x[..., 0] + x[..., 2] / 2
-    y[..., 3] = x[..., 1] + x[..., 3] / 2
-    return y
-
-
-def xywh2xyxy_np(x):
-    y = np.zeros_like(x)
-    y[..., 0] = x[..., 0] - x[..., 2] / 2
-    y[..., 1] = x[..., 1] - x[..., 3] / 2
-    y[..., 2] = x[..., 0] + x[..., 2] / 2
-    y[..., 3] = x[..., 1] + x[..., 3] / 2
-    return y
 
 
 def ap_per_class(tp, conf, pred_cls, target_cls):
@@ -423,26 +453,6 @@ def print_environment_info():
         print(f"Current Commit Hash: {subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], stderr=subprocess.DEVNULL).decode('ascii').strip()}")
     except (subprocess.CalledProcessError, FileNotFoundError):
         print("No git or repo found")
-
-
-def xyxy2xywh(bboxes):
-    bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]
-    bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]
-    return bboxes
-
-def xyxy2cxcywh(bboxes):
-    bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]
-    bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]
-    bboxes[:, 0] = bboxes[:, 0] + bboxes[:, 2] * 0.5
-    bboxes[:, 1] = bboxes[:, 1] + bboxes[:, 3] * 0.5
-    return bboxes
-
-def cxcywh2xyxy(bboxes):
-    bboxes[:, 0] = bboxes[:, 0] - bboxes[:, 2] * 0.5
-    bboxes[:, 1] = bboxes[:, 1] - bboxes[:, 3] * 0.5
-    bboxes[:, 2] = bboxes[:, 0] + bboxes[:, 2]
-    bboxes[:, 3] = bboxes[:, 1] + bboxes[:, 3]
-    return bboxes
 
 
 def nms_postprocess(prediction, num_classes, conf_thre=0.7, nms_thre=0.45, class_agnostic=False):
