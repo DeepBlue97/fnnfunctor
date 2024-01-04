@@ -11,6 +11,170 @@ import subprocess
 import random
 import imgaug as ia
 
+from .point import PointRatio, PointPix
+
+
+def exchange_if_a_greater_b(a, b):
+    if a > b:
+        a, b = b, a
+    return a, b
+
+
+class XYWHRatioBBox():
+    def __init__(self, x, y, w, h):
+        self.xy = PointRatio(x, y)
+        self.wh = PointRatio(w, h)
+
+
+class XYWHPixBBox():
+    def __init__(self, x, y, w, h):
+        self.xy = PointPix(x, y)
+        self.wh = PointPix(w, h)
+
+
+class CXCYWHRatioBBox(XYWHRatioBBox):
+    """
+    
+    """
+    def __init__(self, x, y, w, h):
+        super().__init__(x, y, w, h)
+
+    # def __init__(self, x, y, w, h):
+    #     super.__init__()
+        # self.xy = PointRatio(x, y)
+        # self.wh = PointRatio(w, h)
+
+class CXCYWHPixBBox(XYWHPixBBox):
+    """
+    
+    """
+    def __init__(self, x, y, w, h):
+        super().__init__(x, y, w, h)
+
+
+class X1Y1WHRatioBBox(XYWHRatioBBox):
+    """
+    
+    """
+    def __init__(self, x, y, w, h):
+        super().__init__(x, y, w, h)
+
+
+class X1Y1WHPixBBox(XYWHPixBBox):
+    """
+    
+    """
+    def __init__(self, x, y, w, h):
+        super().__init__(x, y, w, h)
+
+
+class X1Y1X2Y2RatioBBox():
+    """
+    
+    """
+    def __init__(self, x1, y1, x2, y2):
+        x1, x2 = exchange_if_a_greater_b(x1, x2)
+        y1, y2 = exchange_if_a_greater_b(y1, y2)
+
+        self.tl = PointRatio(x1, y1)
+        self.rb = PointRatio(x2, y2)
+
+
+class X1Y1X2Y2PixBBox():
+    """
+    
+    """
+    def __init__(self, x1, y1, x2, y2):
+        x1, x2 = exchange_if_a_greater_b(x1, x2)
+        y1, y2 = exchange_if_a_greater_b(y1, y2)
+
+        self.tl = PointPix(x1, y1)
+        self.rb = PointPix(x2, y2)
+
+
+# class CXCYWHRatioBBox():
+#     """
+    
+#     """
+#     def __init__(self, x, y, w, h, img_w=None, img_h=None):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         self.img_w = img_w
+#         self.img_h = img_h
+
+
+# class CXCYWHPixBBox():
+#     """
+    
+#     """
+#     def __init__(self, x, y, w, h, img_w, img_h):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         self.img_w = img_w
+#         self.img_h = img_h
+
+
+# class X1Y1WHRatioBBox():
+#     """
+    
+#     """
+#     def __init__(self, x, y, w, h, img_w=None, img_h=None):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         self.img_w = img_w
+#         self.img_h = img_h
+
+
+# class X1Y1WHPixBBox():
+#     """
+    
+#     """
+#     def __init__(self, x, y, w, h, img_w, img_h):
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#         self.img_w = img_w
+#         self.img_h = img_h
+
+
+# class X1Y1X2Y2RatioBBox():
+#     """
+    
+#     """
+#     def __init__(self, x1, y1, x2, y2, img_w=None, img_h=None):
+#         x1, x2 = exchange_if_a_greater_b(x1, x2)
+#         y1, y2 = exchange_if_a_greater_b(y1, y2)
+
+#         self.x1 = x1
+#         self.y1 = y1
+#         self.x2 = x2
+#         self.y2 = y2
+#         self.img_w = img_w
+#         self.img_h = img_h
+
+
+# class X1Y1X2Y2PixBBox():
+#     """
+    
+#     """
+#     def __init__(self, x1, y1, x2, y2, img_w, img_h):
+#         x1, x2 = exchange_if_a_greater_b(x1, x2)
+#         y1, y2 = exchange_if_a_greater_b(y1, y2)
+
+#         self.x1 = x1
+#         self.y1 = y1
+#         self.x2 = x2
+#         self.y2 = y2
+#         self.img_w = img_w
+#         self.img_h = img_h
+
 
 def xywh2xyxy(bboxes):
     bboxes[..., 0] = bboxes[..., 0] - bboxes[..., 2] / 2
