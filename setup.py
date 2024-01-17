@@ -22,6 +22,6 @@ def get_extensions():
 
 if __name__ == "__main__":
     setup(
-        ext_modules=get_extensions(),
-        cmdclass={'build_ext': BuildExtension},
+        # ext_modules=get_extensions(),
+        # cmdclass={'build_ext': BuildExtension},
     )
